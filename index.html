@@ -468,7 +468,7 @@ textarea#code-input:focus{border-color:var(--blue)}
 </div>
 
 <script>
-const API = 'http://127.0.0.1:5000';
+const API = window.location.origin;
 const LEVEL_ORDER = ['Beginner','Intermediate','Advanced'];
 const LEVEL_DEFS = {
   Beginner:     {icon:'🌱',desc:'Basic coding concepts',     Easy:{desc:'Print, variables, basic if/else',              topics:['Print/Output','Variables','Basic Math','Simple Conditions','Input/Output']},  Medium:{desc:'Loops, lists, simple functions',         topics:['Loops','Lists','Conditions','Basic Functions','String basics']},       Hard:{desc:'Nested loops, string manipulation',    topics:['Nested Loops','Strings','Pattern Printing','List Operations']}},
