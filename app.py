@@ -74,14 +74,14 @@ LEVELS = {
 # ── Hindsight helpers ─────────────────────────────────────────────────────────
 from hindsight_client import Hindsight
 
-hs_client = Hindsight(
-    base_url=HS_URL,
-    api_key=HS_KEY
-)
-
+def get_hs_client():
+    return Hindsight(
+        base_url='https://api.hindsight.vectorize.io',
+        api_key=HS_KEY
+    )
 def hs_retain(email, content):
     try:
-        result = hs_client.retain(bank_id=HS_BANK, content=content, tags=[email])
+        result = get_hs_client().retain(bank_id=HS_BANK, content=content, tags=[email])
         print(f"✅ Hindsight retain: success={result.success} for {email}")
         return result.success
     except Exception as e:
@@ -90,7 +90,7 @@ def hs_retain(email, content):
 
 def hs_recall(email, query):
     try:
-        result = hs_client.recall(bank_id=HS_BANK, query=query, tags=[email])
+       result = get_hs_client().recall(bank_id=HS_BANK, query=query, tags=[email])
         if result.results:
             memory = "\n".join([r.text for r in result.results])
             print(f"🧠 Hindsight recalled {len(result.results)} memories for {email}")
