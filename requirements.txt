@@ -1,0 +1,9 @@
+flask
+flask-cors
+flask-mail
+groq
+requests
+bcrypt
+gunicorn
+hindsight-client
+python-dotenv

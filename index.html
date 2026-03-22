@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CodeBuddy AI</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0e0f11;--bg2:#161719;--bg3:#1e2024;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--text:#f0f0f0;--text2:#9a9da6;--text3:#5a5d66;--blue:#4f8ef7;--green:#4caf7d;--red:#e05a5a;--blue-dim:rgba(79,142,247,0.12);--green-dim:rgba(76,175,125,0.12);--red-dim:rgba(224,90,90,0.10);--radius:10px;--radius-lg:14px;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.hidden{display:none!important}
+
+/* LANDING */
+#landing{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+.land-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem;width:100%;max-width:440px;text-align:center}
+.logo{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,#4f8ef7,#7c5ef7);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:30px}
+.land-box h1{font-size:26px;font-weight:600;letter-spacing:-0.03em;margin-bottom:8px}
+.land-box p{font-size:14px;color:var(--text2);margin-bottom:1.5rem;line-height:1.6}
+.features{display:flex;flex-direction:column;gap:8px;margin-bottom:2rem;text-align:left}
+.feat{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)}
+.feat span{font-size:16px}
+.land-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-reg{padding:13px;background:linear-gradient(135deg,#4f8ef7,#7c5ef7);color:white;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-log{padding:13px;background:transparent;color:var(--text);border:1px solid var(--border2);border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-log:hover{background:var(--bg3)}
+
+/* AUTH */
+#register-page,#login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+.auth-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;width:100%;max-width:420px}
+.auth-box h2{font-size:20px;font-weight:600;margin-bottom:4px}
+.auth-box .sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem}
+.step-indicator{display:flex;gap:6px;margin-bottom:1.5rem}
+.step-dot{flex:1;height:3px;border-radius:2px;background:var(--border2);transition:background .3s}
+.step-dot.done{background:var(--blue)}
+.field{margin-bottom:1rem}
+.field label{font-size:12px;color:var(--text2);display:block;margin-bottom:5px}
+.field input{width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-size:14px;outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.field input:focus{border-color:var(--blue)}
+.field input[type=password]{letter-spacing:2px}
+.btn-full{width:100%;padding:12px;background:linear-gradient(135deg,#4f8ef7,#7c5ef7);color:white;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s}
+.btn-full:hover{opacity:0.9}
+.btn-full:disabled{opacity:0.5;cursor:not-allowed}
+.hint-box{margin-top:10px;padding:10px 14px;background:var(--blue-dim);border-radius:var(--radius);font-size:13px;color:#a0bfff}
+.err-box{margin-top:10px;padding:10px 14px;background:var(--red-dim);border-radius:var(--radius);font-size:13px;color:var(--red)}
+.switch-link{text-align:center;margin-top:14px;font-size:13px;color:var(--text3)}
+.switch-link a{color:var(--blue);cursor:pointer;text-decoration:underline}
+.back-link{display:block;text-align:center;margin-top:10px;font-size:13px;color:var(--text3);cursor:pointer}
+.back-link:hover{color:var(--text2)}
+.level-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.25rem}
+.lcard{padding:14px 8px;border:2px solid var(--border2);border-radius:var(--radius);cursor:pointer;text-align:center;transition:all .2s}
+.lcard:hover{border-color:var(--blue)}
+.lcard.sel{border-color:var(--blue);background:var(--blue-dim)}
+.lcard .li{font-size:22px;margin-bottom:4px}
+.lcard .ln{font-size:12px;font-weight:600}
+.lcard .ld{font-size:10px;color:var(--text2);margin-top:2px;line-height:1.4}
+.lcard.sel .ln{color:var(--blue)}
+.pass-strength{height:3px;border-radius:2px;margin-top:6px;transition:all .3s}
+
+/* NAV */
+.topnav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:56px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.nav-brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px}
+.nav-logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#4f8ef7,#7c5ef7);display:flex;align-items:center;justify-content:center;font-size:14px}
+.nav-tabs{display:flex;gap:4px}
+.ntab{padding:6px 14px;border-radius:8px;font-size:13px;cursor:pointer;border:none;background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .15s}
+.ntab:hover,.ntab.active{background:var(--bg3);color:var(--text);font-weight:500}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-user{font-size:13px;color:var(--text2)}
+.mem-pill{display:flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;background:var(--green-dim);border:1px solid rgba(76,175,125,0.2);font-size:11px;color:#6dd4a0}
+.mem-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.logout-btn{padding:5px 12px;background:transparent;border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* DASHBOARD */
+#dash-page{background:var(--bg)}
+.page-body{padding:2rem 1.5rem;max-width:1050px;margin:0 auto}
+.page-title{font-size:22px;font-weight:600;letter-spacing:-0.03em;margin-bottom:4px}
+.page-sub{font-size:14px;color:var(--text2);margin-bottom:1.5rem}
+.level-banner{display:flex;align-items:center;gap:12px;padding:1rem 1.25rem;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:1rem}
+.lb-icon{font-size:28px}
+.lb-info h2{font-size:16px;font-weight:600}
+.lb-info p{font-size:13px;color:var(--text2);margin-top:2px}
+.lb-progress{margin-left:auto;text-align:right}
+.lb-label{font-size:11px;color:var(--text3);margin-bottom:4px}
+.lb-bar{width:140px;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.lb-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#4f8ef7,#7c5ef7);transition:width .5s}
+.help-btn{padding:7px 14px;background:transparent;border:1px solid var(--border2);border-radius:var(--radius);font-size:12px;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:1rem;display:inline-flex;align-items:center;gap:6px}
+.help-btn:hover{border-color:var(--blue);color:var(--blue)}
+.dash-tabs{display:flex;gap:4px;margin-bottom:1.25rem;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:4px;width:fit-content}
+.dtab{padding:6px 16px;border-radius:8px;font-size:13px;cursor:pointer;border:none;background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .15s}
+.dtab.active{background:var(--bg3);color:var(--text);font-weight:500}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem}
+.slabel{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.sval{font-size:26px;font-weight:600}
+.sval.sm{font-size:15px;padding-top:4px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem 1.5rem}
+.ptitle{font-size:13px;font-weight:500;margin-bottom:1rem}
+.topic-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.tname{font-size:12px;color:var(--text2);width:120px;flex-shrink:0}
+.tbg{flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.tfill{height:100%;border-radius:2px}
+.tpct{font-size:11px;color:var(--text3);width:32px;text-align:right;font-family:'DM Mono',monospace}
+.badge{display:inline-flex;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500;font-family:'DM Mono',monospace}
+.bg{background:var(--green-dim);color:var(--green)}.bb{background:var(--blue-dim);color:var(--blue)}.br{background:var(--red-dim);color:var(--red)}
+.insight-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:14px}
+.insight-tag{font-size:10px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.insight-body{font-size:13px;color:var(--text);line-height:1.65}
+.sess-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
+.sess-row:last-child{border-bottom:none}
+.sess-title{font-size:13px}.sess-meta{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px}
+.go-btn{display:block;width:100%;padding:11px;margin-top:1rem;background:linear-gradient(135deg,#4f8ef7,#7c5ef7);color:white;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+.level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.lsgrid-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem}
+.lsgrid-card.cur{border-color:var(--blue);background:var(--blue-dim)}
+.lsh{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.lsname{font-size:14px;font-weight:600}
+.lscur{font-size:10px;color:var(--blue);background:var(--blue-dim);padding:2px 8px;border-radius:99px;font-weight:600}
+.lsdrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.lsdlabel{font-size:12px;color:var(--text2)}
+.lsbar{flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin:0 8px}
+.lsbarfill{height:100%;border-radius:2px}
+.lsdcount{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;min-width:24px;text-align:right}
+.lsfooter{margin-top:10px;font-size:11px;color:var(--text3)}
+
+/* PRACTICE */
+#prac-page{background:var(--bg)}
+.prac-grid{display:grid;grid-template-columns:270px 1fr;gap:14px;padding:1.5rem;max-width:1050px;margin:0 auto}
+.sidebar{display:flex;flex-direction:column;gap:10px}
+.csec{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem}
+.csec h3{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.lv-indicator{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg3);border-radius:var(--radius)}
+.lvi-icon{font-size:18px}.lvi-name{font-size:12px;font-weight:500}.lvi-sub{font-size:11px;color:var(--text2);margin-top:1px}
+.chg-btn{margin-left:auto;font-size:11px;color:var(--blue);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif}
+.pills{display:flex;flex-wrap:wrap;gap:5px}
+.pill{padding:4px 11px;border-radius:99px;font-size:12px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.pill:hover{border-color:var(--blue);color:var(--blue)}.pill.on{background:var(--blue);color:white;border-color:var(--blue)}
+.gen-btn{width:100%;padding:11px;background:linear-gradient(135deg,#4f8ef7,#7c5ef7);color:white;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+.gen-btn:disabled{opacity:0.5;cursor:not-allowed}
+.ai-hint{font-size:11px;color:var(--text3);text-align:center;margin-top:6px;line-height:1.5}
+.main-col{display:flex;flex-direction:column;gap:12px}
+.qbox{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.4rem;min-height:160px}
+.sec-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.qtext{font-size:14px;color:var(--text);line-height:1.75;white-space:pre-wrap}.qtext.ph{color:var(--text3)}
+.code-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem}
+.code-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.eval-btn{padding:9px 20px;background:var(--green);color:white;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+.eval-btn:disabled{opacity:0.4;cursor:not-allowed}
+textarea#code-input{width:100%;min-height:200px;padding:14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;resize:vertical;outline:none;line-height:1.65}
+textarea#code-input:focus{border-color:var(--blue)}
+.fb-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.4rem}
+.fb-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13px;font-weight:500}
+.fb-text{font-size:13px;color:var(--text2);line-height:1.75;white-space:pre-wrap}
+.score-chip{padding:3px 12px;border-radius:99px;font-size:12px;font-weight:600;font-family:'DM Mono',monospace}
+.saved-msg{display:flex;align-items:center;gap:6px;margin-top:12px;padding:8px 12px;background:var(--green-dim);border:1px solid rgba(76,175,125,0.2);border-radius:var(--radius);font-size:12px;color:var(--green)}
+.levelup-banner{margin-top:12px;padding:14px;background:linear-gradient(135deg,rgba(76,175,125,0.15),rgba(79,142,247,0.1));border:1px solid rgba(76,175,125,0.3);border-radius:var(--radius);display:flex;align-items:center;gap:12px}
+.lu-text{flex:1}.lu-text strong{font-size:13px;color:var(--green);display:block;margin-bottom:2px}.lu-text span{font-size:12px;color:var(--text2)}
+.lu-accept{padding:6px 14px;background:var(--green);color:white;border:none;border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+.lu-dismiss{padding:6px 10px;background:transparent;color:var(--text3);border:none;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+
+.dots{display:inline-flex;gap:4px}
+.dots span{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:bounce 1.2s infinite}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+.loading-row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2);padding:6px 0}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:999;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;width:100%;max-width:420px}
+.modal-box h2{font-size:18px;font-weight:600;margin-bottom:6px}
+.modal-box p{font-size:13px;color:var(--text2);margin-bottom:1.25rem}
+.modal-btns{display:flex;gap:8px;margin-top:1.5rem}
+.modal-btn-primary{flex:1;padding:11px;background:linear-gradient(135deg,#4f8ef7,#7c5ef7);color:white;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+.modal-btn-cancel{padding:11px 16px;background:var(--bg3);color:var(--text2);border:none;border-radius:var(--radius);font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif}
+
+@media(max-width:700px){.stats-row,.level-grid{grid-template-columns:1fr 1fr}.two-col,.prac-grid,.land-btns{grid-template-columns:1fr}.level-cards,.lsgrid-card{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ══ LANDING ══════════════════════════════════════════════════════ -->
+<div id="landing">
+  <div class="land-box">
+    <div class="logo">💻</div>
+    <h1>CodeBuddy AI</h1>
+    <p>Your personal AI coding coach — personalized questions, smart feedback, and memory that grows with you.</p>
+    <div class="features">
+      <div class="feat"><span>🧠</span> Hindsight memory — remembers your progress forever</div>
+      <div class="feat"><span>🎯</span> Questions matched to your exact level</div>
+      <div class="feat"><span>💡</span> AI mentor feedback on every solution</div>
+      <div class="feat"><span>📈</span> Track your growth over time</div>
+    </div>
+    <div class="land-btns">
+      <button class="btn-reg" onclick="showPage('register-page')">🚀 Register</button>
+      <button class="btn-log" onclick="showPage('login-page')">🔑 Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REGISTER ══════════════════════════════════════════════════════ -->
+<div id="register-page" class="hidden">
+  <div class="auth-box">
+    <h2>Create your account</h2>
+    <div class="sub">Join CodeBuddy AI and start your personalized coding journey</div>
+    <div class="step-indicator">
+      <div class="step-dot done" id="rs1"></div>
+      <div class="step-dot" id="rs2"></div>
+      <div class="step-dot" id="rs3"></div>
+      <div class="step-dot" id="rs4"></div>
+    </div>
+
+    <!-- Step 1: Email -->
+    <div id="r-s1">
+      <div class="field"><label>Email address</label><input type="email" id="r-email" placeholder="you@example.com"/></div>
+      <button class="btn-full" id="r-s1-btn" onclick="rSendOtp()">Send OTP →</button>
+      <div id="r-s1-msg"></div>
+      <div class="switch-link">Already have an account? <a onclick="showPage('login-page')">Login here</a></div>
+    </div>
+
+    <!-- Step 2: OTP -->
+    <div id="r-s2" class="hidden">
+      <div class="hint-box" id="r-otp-hint">📧 Check your email for the OTP</div>
+      <div class="field" style="margin-top:1rem"><label>6-digit OTP</label><input type="text" id="r-otp" placeholder="123456" maxlength="6"/></div>
+      <button class="btn-full" id="r-s2-btn" onclick="rVerifyOtp()">Verify OTP →</button>
+      <div id="r-s2-msg"></div>
+    </div>
+
+    <!-- Step 3: Password -->
+    <div id="r-s3" class="hidden">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:1rem">Create a password you'll use to login every time</p>
+      <div class="field">
+        <label>Create password (min 6 characters)</label>
+        <input type="password" id="r-pass" placeholder="••••••••" oninput="checkPassStrength()"/>
+        <div class="pass-strength" id="pass-strength"></div>
+      </div>
+      <div class="field"><label>Confirm password</label><input type="password" id="r-pass2" placeholder="••••••••"/></div>
+      <button class="btn-full" id="r-s3-btn" onclick="rSetPassword()">Continue →</button>
+      <div id="r-s3-msg"></div>
+    </div>
+
+    <!-- Step 4: Level -->
+    <div id="r-s4" class="hidden">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:1rem">Choose your current coding level:</p>
+      <div class="level-cards">
+        <div class="lcard sel" id="rl-Beginner" onclick="rSelectLevel('Beginner')">
+          <div class="li">🌱</div><div class="ln">Beginner</div>
+          <div class="ld">New to coding or learning basics</div>
+        </div>
+        <div class="lcard" id="rl-Intermediate" onclick="rSelectLevel('Intermediate')">
+          <div class="li">⚡</div><div class="ln">Intermediate</div>
+          <div class="ld">Comfortable with basics, learning algorithms</div>
+        </div>
+        <div class="lcard" id="rl-Advanced" onclick="rSelectLevel('Advanced')">
+          <div class="li">🔥</div><div class="ln">Advanced</div>
+          <div class="ld">Experienced with complex problems</div>
+        </div>
+      </div>
+      <button class="btn-full" id="r-s4-btn" onclick="rComplete()">Start practicing! →</button>
+      <div id="r-s4-msg"></div>
+    </div>
+
+    <div class="back-link" onclick="showPage('landing')">← Back to home</div>
+  </div>
+</div>
+
+<!-- ══ LOGIN ═════════════════════════════════════════════════════════ -->
+<div id="login-page" class="hidden">
+  <div class="auth-box">
+    <h2>Welcome back! 👋</h2>
+    <div class="sub">Login to continue your coding journey</div>
+    <div class="field"><label>Email address</label><input type="email" id="l-email" placeholder="you@example.com"/></div>
+    <div class="field"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <button class="btn-full" id="l-btn" onclick="doLogin()">Login →</button>
+    <div id="l-msg"></div>
+    <div class="switch-link" style="margin-top:12px">New user? <a onclick="showPage('register-page')">Register here</a></div>
+    <div class="back-link" onclick="showPage('landing')">← Back to home</div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ═════════════════════════════════════════════════════ -->
+<div id="dash-page" class="hidden">
+  <nav class="topnav">
+    <div class="nav-brand"><div class="nav-logo">💻</div>CodeBuddy AI</div>
+    <div class="nav-tabs">
+      <button class="ntab active" id="tab-d" onclick="goTab('dash')">Dashboard</button>
+      <button class="ntab" id="tab-p" onclick="goTab('prac')">Practice</button>
+    </div>
+    <div class="nav-right">
+      <div class="mem-pill"><div class="mem-dot"></div>Hindsight active</div>
+      <div class="nav-user" id="nav-user"></div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+  <div class="page-body">
+    <div class="page-title" id="dash-title">Welcome back! 👋</div>
+    <div class="page-sub">Your personalized progress, powered by Hindsight memory</div>
+    <div class="level-banner">
+      <div class="lb-icon" id="dash-lv-icon">🌱</div>
+      <div class="lb-info"><h2 id="dash-lv-name">Beginner Level</h2><p id="dash-lv-desc">Working through foundational concepts</p></div>
+      <div class="lb-progress">
+        <div class="lb-label" id="lv-prog-label">0 / 10 Hard problems</div>
+        <div class="lb-bar"><div class="lb-fill" id="lv-prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+    <button class="help-btn" onclick="showHelp()">💬 Customer Help & Feedback</button>
+    <div class="dash-tabs">
+      <button class="dtab active" id="dtab-prog" onclick="showDashTab('prog')">📊 Progress</button>
+      <button class="dtab" id="dtab-lv" onclick="showDashTab('lv')">🎯 My Level</button>
+    </div>
+
+    <!-- Progress tab -->
+    <div id="dash-prog">
+      <div class="stats-row">
+        <div class="stat"><div class="slabel">Problems solved</div><div class="sval" id="s-solved">0</div></div>
+        <div class="stat"><div class="slabel">Accuracy</div><div class="sval" id="s-acc">—</div></div>
+        <div class="stat"><div class="slabel">Strongest topic</div><div class="sval sm" id="s-strong">—</div></div>
+        <div class="stat"><div class="slabel">Needs work</div><div class="sval sm" id="s-weak">—</div></div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <div class="ptitle">Topic performance</div>
+          <div id="topic-bars"><p style="font-size:13px;color:var(--text3)">Complete sessions to see breakdown.</p></div>
+        </div>
+        <div class="panel">
+          <div class="ptitle">🧠 Hindsight memory insight</div>
+          <div class="insight-box">
+            <div class="insight-tag">AI synthesis from your memory bank</div>
+            <div class="insight-body" id="hs-insight">Complete your first session to generate your memory profile!</div>
+          </div>
+          <div class="ptitle">Recent sessions</div>
+          <div id="recent-sess"><p style="font-size:13px;color:var(--text3)">No sessions yet.</p></div>
+          <button class="go-btn" onclick="goTab('prac')">Start practicing →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level tab -->
+    <div id="dash-lv-content" class="hidden">
+      <div class="level-grid" id="level-grid"></div>
+      <div class="panel" style="margin-top:14px">
+        <div class="ptitle">When to level up?</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.7">
+          🌱 <strong style="color:var(--text)">Beginner →</strong> When you score 70+ consistently on Beginner Hard problems.<br><br>
+          ⚡ <strong style="color:var(--text)">Intermediate →</strong> When Intermediate Hard feels comfortable.<br><br>
+          🔥 <strong style="color:var(--text)">Advanced →</strong> You're at the top — keep challenging yourself!
+        </p>
+        <button class="go-btn" style="margin-top:1rem" onclick="showLevelModal()">Change my level →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PRACTICE ══════════════════════════════════════════════════════ -->
+<div id="prac-page" class="hidden">
+  <nav class="topnav">
+    <div class="nav-brand"><div class="nav-logo">💻</div>CodeBuddy AI</div>
+    <div class="nav-tabs">
+      <button class="ntab" id="tab-d2" onclick="goTab('dash')">Dashboard</button>
+      <button class="ntab active" id="tab-p2" onclick="goTab('prac')">Practice</button>
+    </div>
+    <div class="nav-right">
+      <div class="mem-pill"><div class="mem-dot"></div>Hindsight active</div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+  <div class="prac-grid">
+    <div class="sidebar">
+      <div class="csec">
+        <h3>Your level</h3>
+        <div class="lv-indicator">
+          <div class="lvi-icon" id="prac-lv-icon">🌱</div>
+          <div><div class="lvi-name" id="prac-lv-name">Beginner</div><div class="lvi-sub" id="prac-lv-sub">Basic coding</div></div>
+          <button class="chg-btn" onclick="showLevelModal()">Change</button>
+        </div>
+      </div>
+      <div class="csec">
+        <h3>Difficulty</h3>
+        <div class="pills" id="diff-pills">
+          <div class="pill on" onclick="pick(this,'diff')">Easy</div>
+          <div class="pill" onclick="pick(this,'diff')">Medium</div>
+          <div class="pill" onclick="pick(this,'diff')">Hard</div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5" id="diff-desc">Basic concepts for your level</div>
+      </div>
+      <div class="csec">
+        <h3>Topic <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:10px">(AI picks if blank)</span></h3>
+        <div class="pills" id="topic-pills"></div>
+      </div>
+      <div class="csec">
+        <h3>Language</h3>
+        <div class="pills" id="lang-pills">
+          <div class="pill on" onclick="pick(this,'lang')">Python</div>
+          <div class="pill" onclick="pick(this,'lang')">JavaScript</div>
+          <div class="pill" onclick="pick(this,'lang')">Java</div>
+          <div class="pill" onclick="pick(this,'lang')">C++</div>
+        </div>
+      </div>
+      <button class="gen-btn" id="gen-btn" onclick="generateQ()">✦ Generate question</button>
+      <div id="gen-load" class="hidden" style="text-align:center;padding:8px 0">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px" id="gen-msg">Generating...</div>
+      </div>
+      <div class="ai-hint" id="ai-hint">Questions personalized using Hindsight memory</div>
+    </div>
+    <div class="main-col">
+      <div class="qbox">
+        <div class="sec-label">Question</div>
+        <div class="qtext ph" id="q-display">Click "Generate question" to get a problem matched to your level!</div>
+      </div>
+      <div class="code-box">
+        <div class="code-hdr">
+          <div class="sec-label" style="margin-bottom:0">Your solution</div>
+          <button class="eval-btn" id="eval-btn" onclick="submitEval()" disabled>Evaluate →</button>
+        </div>
+        <textarea id="code-input" placeholder="Write your code here..." oninput="checkReady()"></textarea>
+      </div>
+      <div class="fb-box hidden" id="fb-box">
+        <div class="fb-hdr">💡 AI Mentor Feedback <span class="score-chip hidden" id="score-chip"></span></div>
+        <div class="fb-text" id="fb-text"></div>
+        <div class="saved-msg hidden" id="saved-msg">✅ Memory saved to Hindsight — next question will be more personalized!</div>
+        <div class="levelup-banner hidden" id="lu-banner">
+          <div style="font-size:28px">🎉</div>
+          <div class="lu-text">
+            <strong id="lu-title">Ready to level up?</strong>
+            <span id="lu-desc">You're doing great!</span>
+          </div>
+          <button class="lu-accept" onclick="acceptLevelUp()">Level up!</button>
+          <button class="lu-dismiss" onclick="document.getElementById('lu-banner').classList.add('hidden')">Not yet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Level modal -->
+<div id="level-modal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h2>Change your level</h2>
+    <p>Pick the level that matches where you are now</p>
+    <div class="level-cards">
+      <div class="lcard" id="ml-Beginner" onclick="selectModalLevel('Beginner')"><div class="li">🌱</div><div class="ln">Beginner</div></div>
+      <div class="lcard" id="ml-Intermediate" onclick="selectModalLevel('Intermediate')"><div class="li">⚡</div><div class="ln">Intermediate</div></div>
+      <div class="lcard" id="ml-Advanced" onclick="selectModalLevel('Advanced')"><div class="li">🔥</div><div class="ln">Advanced</div></div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn-primary" onclick="confirmLevelChange()">Confirm</button>
+      <button class="modal-btn-cancel" onclick="document.getElementById('level-modal').classList.add('hidden')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Help modal -->
+<div id="help-modal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h2>💬 Send Feedback</h2>
+    <p>Our team reads every message and responds within 24 hours!</p>
+    <div class="field"><label>Your message or complaint</label>
+      <textarea id="help-msg" rows="5" placeholder="Describe your issue or feedback..." style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;resize:vertical;outline:none"></textarea>
+    </div>
+    <div id="help-status" style="font-size:13px;min-height:20px;margin-bottom:8px"></div>
+    <div class="modal-btns">
+      <button class="modal-btn-primary" id="help-send-btn" onclick="submitHelp()">Send Feedback →</button>
+      <button class="modal-btn-cancel" onclick="document.getElementById('help-modal').classList.add('hidden')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://127.0.0.1:5000';
+const LEVEL_ORDER = ['Beginner','Intermediate','Advanced'];
+const LEVEL_DEFS = {
+  Beginner:     {icon:'🌱',desc:'Basic coding concepts',     Easy:{desc:'Print, variables, basic if/else',              topics:['Print/Output','Variables','Basic Math','Simple Conditions','Input/Output']},  Medium:{desc:'Loops, lists, simple functions',         topics:['Loops','Lists','Conditions','Basic Functions','String basics']},       Hard:{desc:'Nested loops, string manipulation',    topics:['Nested Loops','Strings','Pattern Printing','List Operations']}},
+  Intermediate: {icon:'⚡',desc:'Algorithms & data structures',Easy:{desc:'Sorting, searching, basic recursion',          topics:['Sorting','Searching','Recursion','Dictionaries','Functions']},              Medium:{desc:'Stacks, queues, string algorithms',      topics:['Stacks','Queues','Linked Lists','String Algorithms','Two Pointers']},  Hard:{desc:'Trees, hash maps, basic DP',           topics:['Trees','Hash Maps','Sliding Window','Dynamic Programming']}},
+  Advanced:     {icon:'🔥',desc:'Complex problems & optimization',Easy:{desc:'Graphs, advanced DP, backtracking',         topics:['Graphs','BFS/DFS','Advanced DP','Backtracking']},                           Medium:{desc:'Shortest path, LRU Cache',               topics:['Shortest Path','Advanced DP','Caching','Complex Data Structures']},    Hard:{desc:'Hard optimization, multiple algorithms',topics:['Complex Optimization','Multiple Algorithms','System Design','Hard Graph Problems']}}
+};
+
+let currentUser=null, userData={}, currentQ=null;
+let rEmail='', rLevel='Beginner', pendingLevel='Beginner';
+
+// ── Storage ───────────────────────────────────────────────────────────────────
+function lsKey(e){return 'cb4_'+e.replace(/[^a-z0-9]/gi,'_')}
+function loadUD(e){try{const r=localStorage.getItem(lsKey(e));if(r)return JSON.parse(r)}catch(x){}
+  return {email:e,level:null,sessions:[],topicScores:{},totalSolved:0,goodSolutions:0,levelStats:{Beginner:{Easy:0,Medium:0,Hard:0},Intermediate:{Easy:0,Medium:0,Hard:0},Advanced:{Easy:0,Medium:0,Hard:0}}}}
+function saveUD(){if(currentUser)try{localStorage.setItem(lsKey(currentUser),JSON.stringify(userData))}catch(x){}}
+function ensureLS(){if(!userData.levelStats)userData.levelStats={Beginner:{Easy:0,Medium:0,Hard:0},Intermediate:{Easy:0,Medium:0,Hard:0},Advanced:{Easy:0,Medium:0,Hard:0}}}
+
+// ── Page navigation ───────────────────────────────────────────────────────────
+function showPage(id){
+  ['landing','register-page','login-page','dash-page','prac-page'].forEach(p=>document.getElementById(p).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+// ── REGISTER ──────────────────────────────────────────────────────────────────
+function setRegStep(n){
+  [1,2,3,4].forEach(i=>{
+    document.getElementById('r-s'+i).classList.toggle('hidden',i!==n);
+    document.getElementById('rs'+i).classList.toggle('done',i<=n);
+  });
+}
+
+async function rSendOtp(){
+  const email=document.getElementById('r-email').value.trim();
+  if(!email||!email.includes('@')){showMsg('r-s1-msg','Please enter a valid email','err');return}
+  rEmail=email.toLowerCase();
+  const btn=document.getElementById('r-s1-btn'); btn.textContent='Sending...'; btn.disabled=true;
+  try{
+    const res=await fetch(API+'/api/register/send-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:rEmail})});
+    const d=await res.json();
+    if(d.error){showMsg('r-s1-msg',d.error,'err');return}
+    document.getElementById('r-otp-hint').textContent='📧 OTP sent to '+rEmail+' — check your inbox!';
+    setRegStep(2);
+  }catch(e){showMsg('r-s1-msg','Error: '+e.message,'err')}
+  btn.textContent='Send OTP →'; btn.disabled=false;
+}
+
+async function rVerifyOtp(){
+  const otp=document.getElementById('r-otp').value.trim();
+  const btn=document.getElementById('r-s2-btn'); btn.textContent='Verifying...'; btn.disabled=true;
+  try{
+    const res=await fetch(API+'/api/register/verify-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:rEmail,otp})});
+    const d=await res.json();
+    if(!d.success){showMsg('r-s2-msg',d.error,'err');return}
+    setRegStep(3);
+  }catch(e){showMsg('r-s2-msg','Error: '+e.message,'err')}
+  btn.textContent='Verify OTP →'; btn.disabled=false;
+}
+
+function checkPassStrength(){
+  const p=document.getElementById('r-pass').value;
+  const bar=document.getElementById('pass-strength');
+  if(p.length===0){bar.style.background='transparent';bar.style.width='0'}
+  else if(p.length<6){bar.style.background='var(--red)';bar.style.width='33%'}
+  else if(p.length<10){bar.style.background='var(--amber,#e8a44a)';bar.style.width='66%'}
+  else{bar.style.background='var(--green)';bar.style.width='100%'}
+}
+
+function rSetPassword(){
+  const p1=document.getElementById('r-pass').value;
+  const p2=document.getElementById('r-pass2').value;
+  if(p1.length<6){showMsg('r-s3-msg','Password must be at least 6 characters','err');return}
+  if(p1!==p2){showMsg('r-s3-msg','Passwords do not match!','err');return}
+  setRegStep(4);
+}
+
+function rSelectLevel(l){
+  rLevel=l;
+  ['Beginner','Intermediate','Advanced'].forEach(x=>document.getElementById('rl-'+x)?.classList.toggle('sel',x===l));
+}
+
+async function rComplete(){
+  const pass=document.getElementById('r-pass').value;
+  const btn=document.getElementById('r-s4-btn'); btn.textContent='Creating account...'; btn.disabled=true;
+  try{
+    const res=await fetch(API+'/api/register/complete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:rEmail,password:pass,level:rLevel})});
+    const d=await res.json();
+    if(d.error){showMsg('r-s4-msg',d.error,'err');return}
+    // Auto-login after register
+    currentUser=rEmail;
+    userData=loadUD(rEmail);
+    userData.level=rLevel;
+    ensureLS(); saveUD();
+    enterApp();
+  }catch(e){showMsg('r-s4-msg','Error: '+e.message,'err')}
+  btn.textContent='Start practicing! →'; btn.disabled=false;
+}
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
+async function doLogin(){
+  const email=document.getElementById('l-email').value.trim().toLowerCase();
+  const pass=document.getElementById('l-pass').value;
+  if(!email||!pass){showMsg('l-msg','Please enter email and password','err');return}
+  const btn=document.getElementById('l-btn'); btn.textContent='Logging in...'; btn.disabled=true;
+  try{
+    const res=await fetch(API+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+    const d=await res.json();
+    if(!d.success){showMsg('l-msg',d.error,'err');return}
+    currentUser=email;
+    userData=loadUD(email);
+    if(!userData.level) userData.level=d.level;
+    ensureLS(); saveUD();
+    enterApp();
+  }catch(e){showMsg('l-msg','Error: '+e.message,'err')}
+  btn.textContent='Login →'; btn.disabled=false;
+}
+
+// ── Enter app ─────────────────────────────────────────────────────────────────
+function enterApp(){
+  document.getElementById('nav-user').textContent=currentUser.split('@')[0];
+  document.getElementById('dash-title').textContent='Welcome back, '+currentUser.split('@')[0]+'! 👋';
+  showPage('dash-page');
+  updateDash();
+}
+
+// ── Logout ────────────────────────────────────────────────────────────────────
+function logout(){
+  if(!confirm('Are you sure you want to logout?'))return;
+  currentUser=null; userData={}; currentQ=null;
+  showPage('landing');
+}
+
+// ── UI helpers ────────────────────────────────────────────────────────────────
+function showMsg(id,msg,type){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.innerHTML=`<div class="${type==='err'?'err-box':'hint-box'}" style="margin-top:10px">${msg}</div>`;
+}
+
+// ── Tab navigation ────────────────────────────────────────────────────────────
+function goTab(tab){
+  document.getElementById('dash-page').classList.add('hidden');
+  document.getElementById('prac-page').classList.add('hidden');
+  document.getElementById(tab==='dash'?'dash-page':'prac-page').classList.remove('hidden');
+  ['tab-d','tab-p','tab-d2','tab-p2'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active')});
+  if(tab==='dash'){document.getElementById('tab-d')?.classList.add('active');document.getElementById('tab-d2')?.classList.add('active');updateDash()}
+  else{document.getElementById('tab-p')?.classList.add('active');document.getElementById('tab-p2')?.classList.add('active');updatePracUI()}
+}
+
+function showDashTab(tab){
+  document.getElementById('dash-prog').classList.toggle('hidden',tab!=='prog');
+  document.getElementById('dash-lv-content').classList.toggle('hidden',tab!=='lv');
+  document.getElementById('dtab-prog').classList.toggle('active',tab==='prog');
+  document.getElementById('dtab-lv').classList.toggle('active',tab==='lv');
+  if(tab==='lv')renderLevelGrid();
+}
+
+// ── Level UI ──────────────────────────────────────────────────────────────────
+function updateLevelUI(){
+  const lv=userData.level||'Beginner'; const def=LEVEL_DEFS[lv];
+  document.getElementById('dash-lv-icon').textContent=def.icon;
+  document.getElementById('dash-lv-name').textContent=lv+' Level';
+  document.getElementById('dash-lv-desc').textContent=def.desc;
+  document.getElementById('prac-lv-icon').textContent=def.icon;
+  document.getElementById('prac-lv-name').textContent=lv;
+  document.getElementById('prac-lv-sub').textContent=def.desc;
+  ensureLS();
+  const hard=userData.levelStats[lv]?.Hard||0;
+  document.getElementById('lv-prog-fill').style.width=Math.min(100,(hard/10)*100)+'%';
+  document.getElementById('lv-prog-label').textContent=hard+' / 10 Hard problems';
+}
+
+function renderLevelGrid(){
+  const cur=userData.level||'Beginner'; ensureLS();
+  document.getElementById('level-grid').innerHTML=LEVEL_ORDER.map(lv=>{
+    const def=LEVEL_DEFS[lv]; const s=userData.levelStats[lv]||{Easy:0,Medium:0,Hard:0};
+    return `<div class="lsgrid-card ${lv===cur?'cur':''}">
+      <div class="lsh"><div style="font-size:20px">${def.icon}</div><div class="lsname">${lv}</div>${lv===cur?'<div class="lscur">Current</div>':''}</div>
+      ${['Easy','Medium','Hard'].map(d=>{const c=s[d]||0;const pct=Math.min(100,(c/10)*100);const col=d==='Easy'?'var(--green)':d==='Medium'?'var(--blue)':'var(--red)';
+        return `<div class="lsdrow"><div class="lsdlabel">${d}</div><div class="lsbar"><div class="lsbarfill" style="width:${pct}%;background:${col}"></div></div><div class="lsdcount">${c}</div></div>`}).join('')}
+      <div class="lsfooter">${(s.Easy||0)+(s.Medium||0)+(s.Hard||0)} total solved</div>
+    </div>`}).join('');
+}
+
+function showLevelModal(){
+  pendingLevel=userData.level||'Beginner';
+  ['Beginner','Intermediate','Advanced'].forEach(l=>document.getElementById('ml-'+l)?.classList.toggle('sel',l===pendingLevel));
+  document.getElementById('level-modal').classList.remove('hidden');
+}
+function selectModalLevel(l){pendingLevel=l;['Beginner','Intermediate','Advanced'].forEach(x=>document.getElementById('ml-'+x)?.classList.toggle('sel',x===l))}
+function confirmLevelChange(){userData.level=pendingLevel;saveUD();document.getElementById('level-modal').classList.add('hidden');updateLevelUI();updateDash()}
+function acceptLevelUp(){const i=LEVEL_ORDER.indexOf(userData.level);if(i<LEVEL_ORDER.length-1){userData.level=LEVEL_ORDER[i+1];saveUD();document.getElementById('lu-banner').classList.add('hidden');updateLevelUI();alert('🎉 Leveled up to '+userData.level+'!')}}
+
+// ── Dashboard ─────────────────────────────────────────────────────────────────
+function updateDash(){
+  updateLevelUI();
+  document.getElementById('s-solved').textContent=userData.totalSolved||0;
+  const acc=userData.totalSolved>0?Math.round((userData.goodSolutions/userData.totalSolved)*100)+'%':'—';
+  document.getElementById('s-acc').textContent=acc;
+  const sc=Object.entries(userData.topicScores||{}).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('s-strong').textContent=sc.length?sc[0][0]:'—';
+  document.getElementById('s-weak').textContent=sc.length>1?sc[sc.length-1][0]:'—';
+  const barsEl=document.getElementById('topic-bars');
+  if(!sc.length)barsEl.innerHTML='<p style="font-size:13px;color:var(--text3)">Complete sessions to see breakdown.</p>';
+  else barsEl.innerHTML=sc.slice(0,6).map(([t,s])=>{const pct=Math.min(100,s);const c=pct>=70?'var(--green)':pct>=40?'var(--blue)':'var(--red)';return `<div class="topic-row"><div class="tname">${t}</div><div class="tbg"><div class="tfill" style="width:${pct}%;background:${c}"></div></div><div class="tpct">${Math.round(pct)}%</div></div>`}).join('');
+  const sessEl=document.getElementById('recent-sess');
+  const sess=(userData.sessions||[]).slice(-5).reverse();
+  if(!sess.length)sessEl.innerHTML='<p style="font-size:13px;color:var(--text3)">No sessions yet.</p>';
+  else sessEl.innerHTML=sess.map(s=>`<div class="sess-row"><div><div class="sess-title">${s.level||''} ${s.topic} — ${s.difficulty}</div><div class="sess-meta">${s.lang} · ${s.date}</div></div><span class="badge ${s.score>=70?'bg':s.score>=40?'bb':'br'}">${s.score}/100</span></div>`).join('');
+  const iEl=document.getElementById('hs-insight');
+  if(userData.totalSolved>0){const sc2=Object.entries(userData.topicScores||{}).sort((a,b)=>a[1]-b[1]);const weak=sc2.slice(0,2).map(x=>x[0]).join(' and ');const strong=sc2[sc2.length-1]?.[0];iEl.textContent=`As a ${userData.level||'Beginner'} student with ${userData.totalSolved} session(s), focus on ${weak||'regular practice'}. ${strong?'You\'re doing well in '+strong+'.':''} Keep it up!`}
+  else iEl.textContent='Complete your first session to generate your personalized memory profile!';
+}
+
+// ── Practice ──────────────────────────────────────────────────────────────────
+function updatePracUI(){
+  const lv=userData.level||'Beginner'; const diff=getSel('diff-pills')[0]||'Easy';
+  const dd=LEVEL_DEFS[lv][diff];
+  document.getElementById('topic-pills').innerHTML=dd.topics.map(t=>`<div class="pill" onclick="pick(this,'topic')">${t}</div>`).join('');
+  document.getElementById('diff-desc').textContent=dd.desc;
+}
+
+function pick(el,group){
+  if(group==='topic'){el.classList.toggle('on');return}
+  el.closest('.pills').querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  if(group==='diff')updatePracUI();
+}
+function getSel(id){return [...(document.getElementById(id)?.querySelectorAll('.pill.on')||[])].map(p=>p.textContent.trim())}
+function checkReady(){document.getElementById('eval-btn').disabled=!document.getElementById('code-input').value.trim()||!currentQ}
+
+async function generateQ(){
+  const lv=userData.level||'Beginner'; const diff=getSel('diff-pills')[0]||'Easy';
+  const topics=getSel('topic-pills'); const lang=getSel('lang-pills')[0]||'Python';
+  document.getElementById('gen-btn').disabled=true;
+  document.getElementById('gen-load').classList.remove('hidden');
+  document.getElementById('gen-msg').textContent='Generating '+lv+' '+diff+' question...';
+  document.getElementById('ai-hint').textContent='';
+  const qEl=document.getElementById('q-display'); qEl.textContent=''; qEl.classList.remove('ph');
+  document.getElementById('fb-box').classList.add('hidden');
+  document.getElementById('code-input').value='';
+  document.getElementById('eval-btn').disabled=true; currentQ=null;
+  try{
+    const res=await fetch(API+'/api/generate-question',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:currentUser,level:lv,difficulty:diff,topic:topics[0]||'',language:lang})});
+    if(!res.ok)throw new Error('Server error '+res.status);
+    const d=await res.json(); currentQ=d;
+    qEl.textContent=d.question;
+    document.getElementById('ai-hint').textContent='✓ '+lv+' '+diff+' question ready'+(topics.length===0?' (topic chosen by Hindsight)':'');
+  }catch(e){qEl.textContent='❌ Error: '+e.message; qEl.classList.add('ph')}
+  document.getElementById('gen-btn').disabled=false; document.getElementById('gen-load').classList.add('hidden'); checkReady();
+}
+
+async function submitEval(){
+  const code=document.getElementById('code-input').value.trim();
+  if(!code||!currentQ)return;
+  const btn=document.getElementById('eval-btn'); btn.disabled=true; btn.textContent='Evaluating...';
+  document.getElementById('fb-box').classList.remove('hidden');
+  document.getElementById('fb-text').innerHTML='<div class="loading-row"><div class="dots"><span></span><span></span><span></span></div> AI mentor is reviewing your code...</div>';
+  document.getElementById('score-chip').classList.add('hidden');
+  document.getElementById('saved-msg').classList.add('hidden');
+  document.getElementById('lu-banner').classList.add('hidden');
+  try{
+    const res=await fetch(API+'/api/evaluate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:currentUser,question:currentQ.question,code,topic:currentQ.topic,difficulty:currentQ.difficulty,language:currentQ.language,level:currentQ.level||userData.level})});
+    if(!res.ok)throw new Error('Server error '+res.status+': '+await res.text());
+    const d=await res.json(); if(d.error)throw new Error(d.error);
+    document.getElementById('fb-text').textContent=d.feedback;
+    const chip=document.getElementById('score-chip'); chip.textContent=d.score+'/100'; chip.classList.remove('hidden');
+    chip.style.background=d.score>=70?'var(--green-dim)':d.score>=40?'var(--blue-dim)':'var(--red-dim)';
+    chip.style.color=d.score>=70?'var(--green)':d.score>=40?'var(--blue)':'var(--red)';
+    // Save session
+    const lv=currentQ.level||userData.level||'Beginner';
+    const sess={level:lv,topic:currentQ.topic,difficulty:currentQ.difficulty,lang:currentQ.language,score:d.score,date:new Date().toLocaleDateString()};
+    userData.sessions=userData.sessions||[]; userData.sessions.push(sess);
+    userData.totalSolved=(userData.totalSolved||0)+1;
+    if(d.score>=60)userData.goodSolutions=(userData.goodSolutions||0)+1;
+    userData.topicScores=userData.topicScores||{};
+    const prev=userData.topicScores[currentQ.topic]||0;
+    userData.topicScores[currentQ.topic]=prev>0?Math.round((prev+d.score)/2):d.score;
+    ensureLS(); if(!userData.levelStats[lv])userData.levelStats[lv]={Easy:0,Medium:0,Hard:0};
+    userData.levelStats[lv][currentQ.difficulty]=(userData.levelStats[lv][currentQ.difficulty]||0)+1;
+    saveUD(); document.getElementById('saved-msg').classList.remove('hidden');
+    // Level up suggestion
+    if(d.score>=70&&currentQ.difficulty==='Hard'){
+      const hard=userData.levelStats[lv]?.Hard||0; const idx=LEVEL_ORDER.indexOf(lv);
+      if(hard>=3&&idx<LEVEL_ORDER.length-1){
+        const next=LEVEL_ORDER[idx+1];
+        document.getElementById('lu-title').textContent='🎉 Ready to level up to '+next+'?';
+        document.getElementById('lu-desc').textContent='You\'ve solved '+hard+' Hard problems at '+lv+' level with great scores!';
+        document.getElementById('lu-banner').classList.remove('hidden');
+      }
+    }
+  }catch(e){document.getElementById('fb-text').innerHTML='<span style="color:var(--red)">❌ Error: '+e.message+'</span>'}
+  btn.disabled=false; btn.textContent='Evaluate →';
+}
+
+// ── Help ──────────────────────────────────────────────────────────────────────
+function showHelp(){document.getElementById('help-msg').value='';document.getElementById('help-status').textContent='';document.getElementById('help-modal').classList.remove('hidden')}
+async function submitHelp(){
+  const msg=document.getElementById('help-msg').value.trim();
+  if(!msg){alert('Please write your message first!');return}
+  const btn=document.getElementById('help-send-btn'); btn.textContent='Sending...'; btn.disabled=true;
+  try{
+    const res=await fetch(API+'/api/send-feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:currentUser,message:msg,totalSolved:userData.totalSolved||0,level:userData.level||'Beginner'})});
+    const d=await res.json();
+    if(d.error)throw new Error(d.error);
+    document.getElementById('help-status').innerHTML='<span style="color:var(--green)">✅ Sent! Our team will get back to you soon.</span>';
+    setTimeout(()=>document.getElementById('help-modal').classList.add('hidden'),2000);
+  }catch(e){document.getElementById('help-status').innerHTML='<span style="color:var(--red)">❌ '+e.message+'</span>'}
+  btn.textContent='Send Feedback →'; btn.disabled=false;
+}
+</script>
+</body>
+</html>
